@@ -28,12 +28,12 @@ RUN apt-get update && apt-get install -y \
 # https://bugs.debian.org/830696 (apt uses gpgv by default in newer releases, rather than gpg)
 RUN curl -L https://github.com/pyenv/pyenv-installer/raw/master/bin/pyenv-installer | bash \
     && echo 'export PATH="/root/.pyenv/bin:$PATH"' >> /root/.bashrc \
-    && echo 'eval "$(pyenv init -)"' >> /root/.bashrc 
+    && echo 'eval "$(pyenv init -)"' >> /root/.bashrc
 
 
 ENV PATH="$PATH:/root/.pyenv/bin:/root/.pyenv/shims"
 ENV PYENV_ROOT="/root/.pyenv"
 
-RUN pyenv install 3.7 && pyenv install 3.8 && pyenv install 3.9 && pyenv install 3.10 && pyenv install 3.11 && pyenv global 3.11
+RUN pyenv install 3.12 && pyenv install 3.13 && pyenv global 3.12
 
 WORKDIR /root

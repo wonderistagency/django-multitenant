@@ -11,10 +11,10 @@ jobs:
   static-checks:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/setup-python@v4
+    - uses: actions/setup-python@v5
       with:
-        python-version: 3.9
-    - uses: actions/checkout@v3
+        python-version: "3.12"
+    - uses: actions/checkout@v4
     - name: Install python dependencies
       run: |
         pip install -r requirements/static-analysis-requirements.txt
@@ -30,36 +30,23 @@ jobs:
         cd docs
         sphinx-build -W -b html source builds
 
-
-
-  tests-django-mt-lt-4_1:
+  tests:
     runs-on: ubuntu-latest
-    name: "Python: ${{matrix.python_version}} | Django: ${{matrix.django_version}} | Citus: ${{matrix.citus_version}}"
+    name: "Python: ${{matrix.python_version}} | Django: 6.0 | Citus: ${{matrix.citus_version}}"
     defaults:
       run:
         shell: bash
     strategy:
       fail-fast: false
       matrix:
-        python_version: ["3.8","3.9","3.10","3.11"]
-        django_version: ["3.2","4.0","4.1","4.2"]
-        citus_version: ["11","12","13"]
-        include:
-          - python_version: "3.7"
-            django_version: "3.2"
-            citus_version: "11"
-          - python_version: "3.7"
-            django_version: "3.2"
-            citus_version: "12"
-          - python_version: "3.7"
-            django_version: "3.2"
-            citus_version: "13"
+        python_version: ["3.12","3.13"]
+        citus_version: ["12","13"]
     env:
       PYTHON_VERSION: ${{ matrix.python_version }}
       CITUS_VERSION: ${{ matrix.citus_version }}
-      DJANGO_VERSION: ${{ matrix.django_version }}
+      DJANGO_VERSION: "6.0"
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Test Django MT
       run: |
         docker compose --project-name django-multitenant up -d || { docker compose logs && false ; }
@@ -73,7 +60,7 @@ jobs:
         -e DATABASE_PORT=5432 \
         citusdata/python-all-versions
     - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
     - name: Test Missing Modules
       run: |
         echo "Running tests for python $PYTHON_VERSION, django $DJANGO_VERSION, citus $CITUS_VERSION"
@@ -86,51 +73,4 @@ jobs:
         -e DATABASE_PORT=5432 \
         citusdata/python-all-versions
     - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v3
-
-  tests-django-mt-4_1:
-    runs-on: ubuntu-latest
-    name: "Python: ${{matrix.python_version}} | Django: ${{matrix.django_version}} | Citus: ${{matrix.citus_version}}"
-    defaults:
-      run:
-        shell: bash
-    strategy:
-      fail-fast: false
-      matrix:
-        python_version: ["3.8","3.9","3.10","3.11"]
-        django_version: ["4.1"]
-        citus_version:  ["11"]
-
-    env:
-      PYTHON_VERSION: ${{ matrix.python_version }}
-      CITUS_VERSION: ${{ matrix.citus_version }}
-      DJANGO_VERSION: ${{ matrix.django_version }}
-    steps:
-    - uses: actions/checkout@v3
-    - name: Test Django MT
-      run: |
-        docker compose --project-name django-multitenant up -d || { docker compose logs && false ; }
-        echo "Running tests for python $PYTHON_VERSION, django $DJANGO_VERSION, citus $CITUS_VERSION"
-        docker run \
-        --entrypoint /build/scripts/test-django-mt.sh \
-        -v $(pwd):/build \
-        --network django-multitenant_default \
-        -e PYTHON_VERSION -e DJANGO_VERSION \
-        -e DATABASE_HOST=django-multitenant_master \
-        -e DATABASE_PORT=5432 \
-        citusdata/python-all-versions
-    - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v3
-    - name: Test Missing Modules
-      run: |
-        echo "Running tests for python $PYTHON_VERSION, django $DJANGO_VERSION, citus $CITUS_VERSION"
-        docker run \
-        --entrypoint /build/scripts/test-django-mt-modules.sh \
-        -v $(pwd):/build \
-        --network django-multitenant_default \
-        -e PYTHON_VERSION -e DJANGO_VERSION \
-        -e DATABASE_HOST=django-multitenant_master \
-        -e DATABASE_PORT=5432 \
-        citusdata/python-all-versions
-    - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4

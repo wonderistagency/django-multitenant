@@ -1,16 +1,10 @@
 # -*- coding: utf-8 -*-
 import os
-import django
 
 
 BASE_PATH = os.path.normpath(
     os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir)
 )
-
-if django.VERSION >= (4, 0):
-    test_db = {"NAME": "postgres"}
-else:
-    test_db = {"NAME": "postgres", "SERIALIZE": False}
 
 DATABASES = {
     "default": {
@@ -20,7 +14,7 @@ DATABASES = {
         "PASSWORD": "",
         "HOST": os.environ.get("DATABASE_HOST", "localhost"),
         "PORT": int(os.environ.get("DATABASE_PORT", "5600")),
-        "TEST": test_db,
+        "TEST": {"NAME": "postgres"},
     }
 }
 

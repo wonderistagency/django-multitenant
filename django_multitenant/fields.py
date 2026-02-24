@@ -1,5 +1,4 @@
 import logging
-import django
 from django.db import models
 from django.db.models.sql.where import WhereNode
 from django.conf import settings
@@ -56,20 +55,8 @@ class TenantForeignKey(models.ForeignKey):
         return super().get_extra_descriptor_filter(instance)
 
     # Override
-    # Django 4.0 removed the where_class argument from this method, so
-    # depending on the version we define the function with a different
-    # signature.
-    # pylint: disable=unused-argument,arguments-differ
-
-    if django.VERSION >= (4, 0):
-
-        def get_extra_restriction(self, alias, related_alias):
-            return self.get_extra_restriction_citus(alias, related_alias)
-
-    else:
-
-        def get_extra_restriction(self, where_class, alias, related_alias):
-            return self.get_extra_restriction_citus(alias, related_alias)
+    def get_extra_restriction(self, alias, related_alias):
+        return self.get_extra_restriction_citus(alias, related_alias)
 
     def get_extra_restriction_citus(self, alias, related_alias):
         """

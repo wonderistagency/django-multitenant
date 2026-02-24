@@ -8,10 +8,7 @@ if TENANT_USE_ASGIREF:
     # asgiref must be installed, its included with Django >= 3.0
     from asgiref.local import Local as local
 else:
-    try:
-        from threading import local
-    except ImportError:
-        from django.utils._threading_local import local
+    from threading import local
 
 
 _thread_locals = _context = local()

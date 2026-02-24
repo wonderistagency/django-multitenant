@@ -1,5 +1,4 @@
 import logging
-import django
 from django.db.backends.postgresql.base import (
     DatabaseFeatures as PostgresqlDatabaseFeatures,
     DatabaseWrapper as PostgresqlDatabaseWrapper,
@@ -134,11 +133,6 @@ class TenantDatabaseFeatures(PostgresqlDatabaseFeatures):
         if issubclass(model, TenantModel):
             return False
         return super().allows_group_by_selected_pks_on_model(model)
-
-    # For django versions before version 3.0 we set a flag that disables this
-    # behaviour for all models.
-    if django.VERSION < (3, 0):
-        allows_group_by_selected_pks = False
 
 
 class DatabaseWrapper(PostgresqlDatabaseWrapper):
