@@ -39,5 +39,5 @@ setup(
         exclude=["*.tests", "*.tests.*", "tests.*", "tests", "docs", "docs.*"]
     ),
     python_requires=">=3.12",
-    install_requires=["Django>=6.0"],
+    install_requires=["Django>=5.2"],
 )
